@@ -44,6 +44,7 @@ def get_toppop_cities(cache_file):
             population = item['fields']['population']
             latitude = item['fields']['coordinates'][0]
             longitude = item['fields']['coordinates'][1]
+            region = (item['fields']['timezone']).split('/')[0]
 
             record = {}
             record['city'] = city_name
@@ -51,6 +52,7 @@ def get_toppop_cities(cache_file):
             record['population'] = population
             record['latitude'] = latitude
             record['longitude'] = longitude
+            record['region'] = region
 
             data[geoname_id] = record
 

@@ -7,6 +7,7 @@ import json
 import requests
 import sqlite3
 import os
+import time
 
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
@@ -95,13 +96,32 @@ def add_lat_long_data(cur_row, data, cur, conn):
             geoname_id = int(item['fields']['geoname_id'])
             latitude = item['fields']['coordinates'][0]
             longitude = item['fields']['coordinates'][1]
-            counter += 1
+
+            ###
+    # for i in latitude_list:
+    #     lat = latitude_list[i]
+    #     for j in longitude_list:
+    #         long = longitude_list[i]
+    #         url = 
+
+
+    #         ###
+
+    #         ##new
+            url = f"http://api.airvisual.com/v2/nearest_city?lat={latitude}&lon={longitude}&key=5c55caf7-4f01-424c-a8ba-a5b474141637"
+            payload={}
+            headers = {}
+            response = requests.request("GET", url, headers=headers, data=payload)
+            time.sleep(10)
+            print(json.loads(response.text))
+    #         counter += 1
+            #response['data']['']
             cur.execute("INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id, latitude, longitude) VALUES (?,?,?)", (geoname_id, latitude, longitude))
         else:
             break
+
     conn.commit()
 
-#### Code below not copied, working with second API now
 
 #Getting AQI Data from API 2
 # def get_aqi_data():

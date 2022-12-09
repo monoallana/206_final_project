@@ -1,3 +1,7 @@
+#FINAL PROJECT
+#Group Name: Smog Busters
+#Rachel Sondergeld, rsond@umich.edu 
+#Allana Tran, allanatt@umich.edu
 
 import json
 import requests
@@ -72,6 +76,48 @@ def add_region_info(data, cur, conn):
 
     conn.commit()
 
+#########################################
+#Creating a table with the lat/long data
+def create_lat_long_table(cur, conn):
+    # specify primary key
+    cur.execute("CREATE TABLE IF NOT EXISTS coordinates (geoname_id INTEGER PRIMARY KEY, latitude TEXT, longitude TEXT)") 
+    conn.commit()
+
+#Adding Latitude and Longitude to a new table
+def add_lat_long_data(cur_row, data, cur, conn):
+    # PUT THE DATA IN
+    info = data
+    regions = []
+    counter = 0
+
+
+    # make region list
+    for item in info['facet_groups'][2]['facets']:
+        region_name = item['name']
+        regions.append(region_name)
+
+    # get 25 and add to table
+    for item in info['records'][cur_row:]:
+        if counter < 25:
+            geoname_id = int(item['fields']['geoname_id'])
+            city_name = item['fields']['name']
+            country = item['fields']['cou_name_en']
+            population = int(item['fields']['population'])
+            region = (item['fields']['timezone']).split('/')[0]
+            region_id = int(regions.index(region))
+
+            counter += 1
+            cur.execute("INSERT OR IGNORE INTO cities (geoname_id, city_name, country, population, region_id) VALUES (?,?,?,?,?)", (geoname_id, city_name, country, population, region_id))
+        else:
+            break
+    conn.commit()
+
+
+def create_AQI_Table(cur, conn):
+    cur.execute('CREATE TABLE IF NOT EXISTS air_pollution_table (geoname_id INTEGER, Latitude INTEGER, Longitude INTEGER, AQI INTEGER)')
+
+
+#########################################
 def main():
     # SETUP DATABASE
     cur, conn = setUpDatabase('TopCityAQI.db')
@@ -93,7 +139,7 @@ def main():
     # ADDING DATA
     add_toppop_cities(rows, get_geoData(),cur, conn)
     add_region_info(get_geoData(), cur, conn)
-    
+
 
 
 main()

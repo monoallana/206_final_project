@@ -123,8 +123,36 @@ def add_lat_long_data(cur_row, data, cur, conn):
 
         else:
             break  
-    
     conn.commit()
+
+def create_inflation_table(cur, conn):
+    cur.execute("CREATE TABLE IF NOT EXISTS INFLATION (Country TEXT PRIMARY KEY, Yearly_Inflation_Rate INTEGER)")
+    conn.commit()
+
+
+def get_inflation_data(cur_row, data, cur, conn):  
+    
+    #get data
+    url = "https://inflation-by-api-ninjas.p.rapidapi.com/v1/inflation"
+
+    headers = {
+	"X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
+	"X-RapidAPI-Host": "inflation-by-api-ninjas.p.rapidapi.com"
+    }
+
+    response = requests.request("GET", url, headers=headers)
+    new_response = json.loads(response.text)
+    counter = 0
+    
+    print(len(new_response))
+    for dictionary in new_response:
+        if counter < 25:
+            Country = dictionary["country"]
+            Yearly_Inflation_Rate = dictionary["yearly_rate_pct"]
+            cur.execute("INSERT OR IGNORE INTO INFLATION (Country, Yearly_Inflation_Rate) VALUES (?,?)", (Country, Yearly_Inflation_Rate))
+            conn.commit()
+            counter += 1
+
 
 ##############################################################################################################################################################################################################################################
 
@@ -152,8 +180,11 @@ def main():
 
     #testing
     #get_aqi_data()
-    create_lat_long_table(cur, conn)
-    add_lat_long_data(rows, get_geoData(),cur, conn)
+    # create_lat_long_table(cur, conn)
+    # add_lat_long_data(rows, get_geoData(),cur, conn)
+    create_inflation_table(cur, conn)
+    get_inflation_data(rows, get_geoData(),cur, conn)
+
 
 
 main()

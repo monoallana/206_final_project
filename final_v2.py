@@ -83,6 +83,11 @@ def create_lat_long_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS AQI_AND_COORDINATES (geoname_id INTEGER PRIMARY KEY, latitude INTEGER, longitude INTEGER, Overall_AQI INTEGER, carbon_monoxide_concentration INTEGER, carbon_monoxide_aqi INTEGER, nitrogen_dioxide_concentration INTEGER, nitrogen_dioxide_aqi INTEGER, ozone_concentration INTEGER, ozone_aqi INTEGER, sulphur_dioxide_concentration INTEGER, sulphur_dioxide_aqi INTEGER, PM2_5_concentration INTEGER, PM2_5_aqi INTEGER, PM10_concentration INTEGER, PM10_aqi)") 
     conn.commit()
 
+#The data for this is also being added at the same time as the other table since they both use lat/long
+def create_WEATHER_table(cur, conn):
+    cur.execute("CREATE TABLE IF NOT EXISTS WEATHER (geoname_id INTEGER PRIMARY KEY, temperature_f INTEGER, wind_mph INTEGER, condition TEXT, UV INTEGER, humidity INTEGER)")
+    conn.commit()
+
 #Adding Latitude and Longitude to a new table
 def add_lat_long_data(cur_row, data, cur, conn):
     # PUT THE DATA IN
@@ -97,12 +102,14 @@ def add_lat_long_data(cur_row, data, cur, conn):
             longitude = item['fields']['coordinates'][1]
             counter += 1
 
+            #WORKING WITH API 2
             url = "https://air-quality-by-api-ninjas.p.rapidapi.com/v1/airquality"
             querystring = {"lat":latitude,"lon":longitude}
             headers = {
 	        "X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
 	        "X-RapidAPI-Host": "air-quality-by-api-ninjas.p.rapidapi.com"}
 
+            #Adding AQI Data
             response = requests.request("GET", url, headers=headers, params=querystring)
             new_response = json.loads(response.text)
             Overall_AQI = int(new_response["overall_aqi"])
@@ -120,39 +127,28 @@ def add_lat_long_data(cur_row, data, cur, conn):
             PM10_aqi = int(new_response["PM10"]["aqi"])
 
             cur.execute("INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi, sulphur_dioxide_concentration, sulphur_dioxide_aqi, PM2_5_concentration, PM2_5_aqi, PM10_concentration, PM10_aqi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi, sulphur_dioxide_concentration, sulphur_dioxide_aqi, PM2_5_concentration, PM2_5_aqi, PM10_concentration, PM10_aqi))
+            
+
+            #Working with API 3
+            url = "https://weatherapi-com.p.rapidapi.com/current.json"
+            querystring = {"q":f"{latitude},{longitude}"}
+            headers = {
+	        "X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
+	        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+            }
+            weather_response = requests.request("GET", url, headers=headers, params=querystring)
+            new_weather_response = json.loads(weather_response.text)
+            temperature_f = new_weather_response["current"]["temp_f"]
+            wind_mph = new_weather_response["current"]["wind_mph"]
+            condition = new_weather_response["current"]["condition"]["text"]
+            UV = new_weather_response["current"]["uv"]
+            humidity = new_weather_response["current"]["humidity"]
+
+            cur.execute("INSERT OR IGNORE INTO WEATHER (geoname_id, temperature_f, wind_mph, condition, UV, humidity) VALUES (?,?,?,?,?,?)",(geoname_id, temperature_f, wind_mph, condition, UV, humidity))
 
         else:
             break  
     conn.commit()
-
-def create_inflation_table(cur, conn):
-    cur.execute("CREATE TABLE IF NOT EXISTS INFLATION (Country TEXT PRIMARY KEY, Yearly_Inflation_Rate INTEGER)")
-    conn.commit()
-
-
-def get_inflation_data(cur_row, data, cur, conn):  
-    
-    #get data
-    url = "https://inflation-by-api-ninjas.p.rapidapi.com/v1/inflation"
-
-    headers = {
-	"X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
-	"X-RapidAPI-Host": "inflation-by-api-ninjas.p.rapidapi.com"
-    }
-
-    response = requests.request("GET", url, headers=headers)
-    new_response = json.loads(response.text)
-    counter = 0
-    
-    print(len(new_response))
-    for dictionary in new_response:
-        if counter < 25:
-            Country = dictionary["country"]
-            Yearly_Inflation_Rate = dictionary["yearly_rate_pct"]
-            cur.execute("INSERT OR IGNORE INTO INFLATION (Country, Yearly_Inflation_Rate) VALUES (?,?)", (Country, Yearly_Inflation_Rate))
-            conn.commit()
-            counter += 1
-
 
 ##############################################################################################################################################################################################################################################
 
@@ -178,12 +174,11 @@ def main():
     add_toppop_cities(rows, get_geoData(),cur, conn)
     add_region_info(get_geoData(), cur, conn)
 
-    #testing
-    #get_aqi_data()
-    # create_lat_long_table(cur, conn)
-    # add_lat_long_data(rows, get_geoData(),cur, conn)
-    create_inflation_table(cur, conn)
-    get_inflation_data(rows, get_geoData(),cur, conn)
+    #AQI and weather tables
+    create_lat_long_table(cur, conn)
+    create_WEATHER_table(cur, conn)
+    add_lat_long_data(rows, get_geoData(),cur, conn)
+
 
 
 

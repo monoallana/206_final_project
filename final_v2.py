@@ -80,7 +80,7 @@ def add_region_info(data, cur, conn):
 #Creating a table with the lat/long data
 def create_lat_long_table(cur, conn):
     # specify primary key
-    cur.execute("CREATE TABLE IF NOT EXISTS AQI_AND_COORDINATES (geoname_id INTEGER PRIMARY KEY, latitude INTEGER, longitude INTEGER, Overall_AQI INTEGER, carbon_monoxide_concentration INTEGER, carbon_monoxide_aqi INTEGER, nitrogen_dioxide_concentration INTEGER, nitrogen_dioxide_aqi INTEGER, ozone_concentration INTEGER, ozone_aqi INTEGER)") 
+    cur.execute("CREATE TABLE IF NOT EXISTS AQI_AND_COORDINATES (geoname_id INTEGER PRIMARY KEY, latitude INTEGER, longitude INTEGER, Overall_AQI INTEGER, carbon_monoxide_concentration INTEGER, carbon_monoxide_aqi INTEGER, nitrogen_dioxide_concentration INTEGER, nitrogen_dioxide_aqi INTEGER, ozone_concentration INTEGER, ozone_aqi INTEGER, sulphur_dioxide_concentration INTEGER, sulphur_dioxide_aqi INTEGER, PM2_5_concentration INTEGER, PM2_5_aqi INTEGER, PM10_concentration INTEGER, PM10_aqi)") 
     conn.commit()
 
 #Adding Latitude and Longitude to a new table
@@ -96,12 +96,9 @@ def add_lat_long_data(cur_row, data, cur, conn):
             latitude = item['fields']['coordinates'][0]
             longitude = item['fields']['coordinates'][1]
             counter += 1
-            # latitude_list.append(latitude)
-            # longitude_list.append(longitude)
+
             url = "https://air-quality-by-api-ninjas.p.rapidapi.com/v1/airquality"
-
             querystring = {"lat":latitude,"lon":longitude}
-
             headers = {
 	        "X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
 	        "X-RapidAPI-Host": "air-quality-by-api-ninjas.p.rapidapi.com"}
@@ -115,9 +112,14 @@ def add_lat_long_data(cur_row, data, cur, conn):
             nitrogen_dioxide_aqi = int(new_response["NO2"]["aqi"])
             ozone_concentration = int(new_response["O3"]["concentration"])
             ozone_aqi = int(new_response["O3"]["aqi"])
+            sulphur_dioxide_concentration = int(new_response["SO2"]["concentration"])
+            sulphur_dioxide_aqi = int(new_response["SO2"]["aqi"])
+            PM2_5_concentration = int(new_response["PM2.5"]["concentration"])
+            PM2_5_aqi = int(new_response["PM2.5"]["aqi"])
+            PM10_concentration = int(new_response["PM10"]["concentration"])
+            PM10_aqi = int(new_response["PM10"]["aqi"])
 
-
-            cur.execute("INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi) VALUES (?,?,?,?,?,?,?,?,?,?)", (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi))
+            cur.execute("INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi, sulphur_dioxide_concentration, sulphur_dioxide_aqi, PM2_5_concentration, PM2_5_aqi, PM10_concentration, PM10_aqi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (geoname_id, latitude, longitude, Overall_AQI, carbon_monoxide_concentration, carbon_monoxide_aqi, nitrogen_dioxide_concentration, nitrogen_dioxide_aqi, ozone_concentration, ozone_aqi, sulphur_dioxide_concentration, sulphur_dioxide_aqi, PM2_5_concentration, PM2_5_aqi, PM10_concentration, PM10_aqi))
 
         else:
             break  

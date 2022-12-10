@@ -7,7 +7,6 @@ import json
 import requests
 import sqlite3
 import os
-import time
 
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
@@ -76,12 +75,12 @@ def add_region_info(data, cur, conn):
 
     conn.commit()
 
-#########################################
+###################################################################################################################################################################################
 
 #Creating a table with the lat/long data
 def create_lat_long_table(cur, conn):
     # specify primary key
-    cur.execute("CREATE TABLE IF NOT EXISTS AQI_AND_COORDINATES (geoname_id INTEGER PRIMARY KEY, latitude INTEGER, longitude INTEGER)") 
+    cur.execute("CREATE TABLE IF NOT EXISTS AQI_AND_COORDINATES (geoname_id INTEGER PRIMARY KEY, latitude INTEGER, longitude INTEGER, AQI INTEGER, co_concentration INTEGER)") 
     conn.commit()
 
 #Adding Latitude and Longitude to a new table
@@ -90,39 +89,45 @@ def add_lat_long_data(cur_row, data, cur, conn):
     info = data
     counter = 0
 
+    latitude_list = []
+    longitude_list = []
     # get 25 and add to table
     for item in info['records'][cur_row:]:
         if counter < 25:
             geoname_id = int(item['fields']['geoname_id'])
             latitude = item['fields']['coordinates'][0]
             longitude = item['fields']['coordinates'][1]
-
-            ###
-    # for i in latitude_list:
-    #     lat = latitude_list[i]
-    #     for j in longitude_list:
-    #         long = longitude_list[i]
-    #         url = 
-
-
-    #         ###
-
-    #         ##new
-            url = f"http://api.airvisual.com/v2/nearest_city?lat={latitude}&lon={longitude}&key=5c55caf7-4f01-424c-a8ba-a5b474141637"
-            payload={}
-            headers = {}
-            response = requests.request("GET", url, headers=headers, data=payload)
-            time.sleep(10)
-            print(json.loads(response.text))
-    #         counter += 1
-            #response['data']['']
+            counter += 1
+            latitude_list.append(latitude)
+            longitude_list.append(longitude)
             cur.execute("INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id, latitude, longitude) VALUES (?,?,?)", (geoname_id, latitude, longitude))
-        else:
-            break
 
+        else:
+            break  
+    
+    for i in range(0,24):
+        lat = latitude_list[i]
+        long = longitude_list[i]
+        url = "https://air-quality-by-api-ninjas.p.rapidapi.com/v1/airquality"
+
+        querystring = {"lat":lat,"lon":long}
+
+        headers = {
+	    "X-RapidAPI-Key": "6db5d5e867mshf4ffc7fbed8576fp151309jsn099bb384efb5",
+	    "X-RapidAPI-Host": "air-quality-by-api-ninjas.p.rapidapi.com"}
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        #print(response.text)
+        new_response = json.loads(response.text)
+        print(new_response)
+        AQI = int(new_response["overall_aqi"])
+        co_concentration = int(new_response["CO"]["concentration"])
+        cur.execute("UPDATE AQI_AND_COORDINATES SET AQI = AQI, co_concentration = co_concentration WHERE AQI = NULL")
+
+    
     conn.commit()
 
-
+#def add_AQI_data():
 #Getting AQI Data from API 2
 # def get_aqi_data():
 #     for row in [lat/long column in the database]:
@@ -135,7 +140,12 @@ def add_lat_long_data(cur_row, data, cur, conn):
 # def add_AQI_data(cur, conn):
 #     cur.execute('INSERT OR IGNORE INTO AQI_AND_COORDINATES (geoname_id INTEGER, Latitude INTEGER, Longitude INTEGER, AQI INTEGER)')
 
-
+        # url = f"http://api.airvisual.com/v2/nearest_city?lat={lat}&lon={long}&key=5c55caf7-4f01-424c-a8ba-a5b474141637"
+        # payload={}
+        # headers = {}
+        # time.sleep(5)
+        # response = requests.request("GET", url, headers=headers, data=payload)
+        # print(json.loads(response.text))
 #########################################
 def main():
     # SETUP DATABASE

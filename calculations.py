@@ -52,6 +52,53 @@ def vis_count_region(cur, conn):
 
 # 2. counting how many most populated cities are in specific AQI ranges (AQI info) (Rachel)
 
+def vis_amount_of_cities_for_AQI_range(cur, conn):
+    cur.execute('SELECT Overall_AQI FROM AQI_AND_COORDINATES')
+    overall_aqi_data = cur.fetchall()
+    conn.commit()
+
+    #Creating dictionary and adding AQI Ranges as defined by American Lung Association
+    number_of_cities_in_AQI_Range = {}
+    number_of_cities_in_AQI_Range["Good"] = 0
+    number_of_cities_in_AQI_Range["Moderate"] = 0
+    number_of_cities_in_AQI_Range["Unhealthy for Sensitive Groups"] = 0
+    number_of_cities_in_AQI_Range["Unhealthy"] = 0
+    number_of_cities_in_AQI_Range["Very Unhealthy"] = 0
+    number_of_cities_in_AQI_Range["Hazardous"] = 0
+
+    for aqi in overall_aqi_data:
+        if aqi[0] <= 50:
+            number_of_cities_in_AQI_Range["Good"] += 1
+        elif aqi[0] <= 100:
+            number_of_cities_in_AQI_Range["Moderate"] += 1
+        elif aqi[0] <= 150:
+            number_of_cities_in_AQI_Range["Unhealthy for Sensitive Groups"] += 1
+        elif aqi[0] <= 200:
+            number_of_cities_in_AQI_Range["Unhealthy"] += 1
+        elif aqi[0] <= 300:
+            number_of_cities_in_AQI_Range["Very Unhealthy"] += 1
+        elif aqi[0] > 300:
+            number_of_cities_in_AQI_Range["Hazardous"] += 1
+
+    # writing aqi range data into the calculations file
+    f = open('calculations.txt', 'a')
+    f.write('This is the number of cities whose air quality index falls into each category defined by the American Lung Association based on data from our database of the most populous cities:\n')
+    for aqi_ALA_range in number_of_cities_in_AQI_Range:
+        f.write("There are " + str(number_of_cities_in_AQI_Range[aqi_ALA_range]) + " number of cities in the air quality index category " + aqi_ALA_range + " of the most populous cities in our database.\n")
+    f.write('\n')
+    f.close()
+
+    # creating visualization
+    ALA_Category = list(number_of_cities_in_AQI_Range.keys())
+    number_of_cities = list(number_of_cities_in_AQI_Range.values())
+    for citynumber in number_of_cities:
+        citynumber = int(citynumber)
+
+    plt.pie(number_of_cities, labels = ALA_Category, autopct='%1.1f%%', colors=['green', 'yellow', 'darkorange', 'magenta', 'darkmagenta', 'red'])
+    plt.title('Number of Cities in each Air Quality Index Category\n(based on data from our database of most populous cities)')
+    plt.xlabel('Air Quality Index Category')
+    plt.show()
+
 # 3. average air pollutant concentration per by country (join) (Rachel)
 
 # 4. average current AQI/weather per region (join) (Allana) -- bargraph
@@ -124,6 +171,7 @@ def vis_pop_vs_aqi(cur, conn):
 # run the show
 cur, conn = setUpDatabase('TopCityAQI.db')
 
-vis_count_region(cur, conn)
-vis_avAQI_by_region(cur, conn)
-vis_pop_vs_aqi(cur, conn)
+#vis_count_region(cur, conn)
+#vis_avAQI_by_region(cur, conn)
+#vis_pop_vs_aqi(cur, conn)
+vis_amount_of_cities_for_AQI_range(cur, conn)

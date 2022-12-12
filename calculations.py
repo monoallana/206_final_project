@@ -101,6 +101,58 @@ def vis_amount_of_cities_for_AQI_range(cur, conn):
 
 # 3. average air pollutant concentration per by country (join) (Rachel)
 
+def vis_pollutant_by_country(cur, conn):
+    cur.execute('SELECT cities.country, AQI_AND_COORDINATES.carbon_monoxide_concentration FROM cities JOIN AQI_AND_COORDINATES ON cities.geoname_id = AQI_AND_COORDINATES.geoname_id')
+    countries_data = cur.fetchall()
+    conn.commit()
+
+    # create dictionary and calculations for carbon monoxide
+    country_carbon_monoxide_concentration = {}
+    number_of_data_points_by_country = {}
+
+    for indv_country_data in countries_data:
+        country = indv_country_data[0]
+        co2_concentration = indv_country_data[1]
+        if country in country_carbon_monoxide_concentration:
+            country_carbon_monoxide_concentration[country] += co2_concentration
+            number_of_data_points_by_country[country] += 1
+        else:
+            country_carbon_monoxide_concentration[country] = co2_concentration
+            number_of_data_points_by_country[country] = 1
+
+    average_carbon_monoxide_concentration_by_country = {}
+
+    for country in country_carbon_monoxide_concentration:
+        average_carbon_monoxide_concentration_by_country[country] = country_carbon_monoxide_concentration[country] / number_of_data_points_by_country[country]
+
+    print(average_carbon_monoxide_concentration_by_country)
+
+    # writing into calculations file
+    f = open('calculations.txt', 'a')
+    f.write('This is the average carbon monoxide concentration average by country based on data from our database of the most populous cities:\n')
+    for country_avg in average_carbon_monoxide_concentration_by_country:
+        f.write(country_avg + " has an average carbon monoxide concentration of " + str(average_carbon_monoxide_concentration_by_country[country_avg]) + " based on the most populous cities in our database.\n")
+    f.write('\n')
+    f.close()
+
+    countries = list(average_carbon_monoxide_concentration_by_country.keys())
+    averages = list(average_carbon_monoxide_concentration_by_country.values())
+
+    plt.bar(countries, averages, color=['darkred', 'darkmagenta', 'darkslategray', 'darkgoldenrod', 'darkblue', 'darkslateblue', 'darkcyan', 'darkorange', 'darkgrey', 'darkturquoise'])
+
+    plt.title('Average Carbon Monoxide Concentration per Country\n(based on data from our database of most populous cities)')
+    plt.xlabel('Countries')
+    plt.ylabel('Carbon Monoxide Concentration')
+    plt.xticks(
+    rotation=90, 
+    horizontalalignment='right',
+    fontweight='light',
+    fontsize='medium'  
+)
+    plt.tight_layout()
+
+    plt.show()
+
 # 4. average current AQI/weather per region (join) (Allana) -- bargraph
 def vis_avAQI_by_region(cur, conn):
     cur.execute('SELECT cities.region_id, regions.region_name, AQI_AND_COORDINATES.Overall_AQI FROM cities JOIN regions ON cities.region_id = regions.region_id JOIN AQI_AND_COORDINATES ON cities.geoname_id = AQI_AND_COORDINATES.geoname_id')
@@ -168,10 +220,35 @@ def vis_pop_vs_aqi(cur, conn):
     plt.tight_layout()
     plt.show()
 
+#Extra to make sure we use weather table (Rachel)
+def vis_weather(cur, conn):
+    cur.execute('SELECT temperature_f, humidity FROM WEATHER')
+    weather_data = cur.fetchall()
+    conn.commit()
+
+    temp_list = []
+    humidity_list = []
+
+    for item in weather_data:
+        temp_list.append(item[0])
+        humidity_list.append(item[1])
+
+    plt.figure()
+    plt.scatter(temp_list, humidity_list, c='red', alpha=0.5)
+
+    plt.xticks()
+    plt.title('Temperature in a City vs. Humidity')
+    plt.xlabel('Current Temperature in City')
+    plt.ylabel('Current Humidity in City')
+    plt.tight_layout()
+    plt.show()
+
 # run the show
 cur, conn = setUpDatabase('TopCityAQI.db')
 
-#vis_count_region(cur, conn)
-#vis_avAQI_by_region(cur, conn)
-#vis_pop_vs_aqi(cur, conn)
+vis_count_region(cur, conn)
+vis_avAQI_by_region(cur, conn)
+vis_pop_vs_aqi(cur, conn)
 vis_amount_of_cities_for_AQI_range(cur, conn)
+vis_pollutant_by_country(cur, conn)
+vis_weather(cur, conn)

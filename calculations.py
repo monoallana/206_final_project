@@ -54,7 +54,7 @@ def vis_count_region(cur, conn):
 
 # 3. average air pollutant concentration per by country (join) (Rachel)
 
-# 4. average current AQI/weather per region (join) (Allana)
+# 4. average current AQI/weather per region (join) (Allana) -- bargraph
 def vis_avAQI_by_region(cur, conn):
     cur.execute('SELECT cities.region_id, regions.region_name, AQI_AND_COORDINATES.Overall_AQI FROM cities JOIN regions ON cities.region_id = regions.region_id JOIN AQI_AND_COORDINATES ON cities.geoname_id = AQI_AND_COORDINATES.geoname_id')
     aqireg_data = cur.fetchall()
@@ -124,6 +124,6 @@ def vis_pop_vs_aqi(cur, conn):
 # run the show
 cur, conn = setUpDatabase('TopCityAQI.db')
 
-# vis_pop_vs_aqi(cur, conn)
-# vis_count_region(cur, conn)
+vis_count_region(cur, conn)
 vis_avAQI_by_region(cur, conn)
+vis_pop_vs_aqi(cur, conn)

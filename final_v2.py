@@ -1,5 +1,5 @@
 #FINAL PROJECT
-#Group Name: Smog Busters
+#Group Name: Smog Busters!
 #Rachel Sondergeld, rsond@umich.edu 
 #Allana Tran, allanatt@umich.edu
 

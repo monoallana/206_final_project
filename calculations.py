@@ -1,3 +1,8 @@
+#FINAL PROJECT
+#Group Name: Smog Busters!
+#Rachel Sondergeld, rsond@umich.edu 
+#Allana Tran, allanatt@umich.edu
+
 # calculations + visualizations file > output visualizations and text file
 import matplotlib.pyplot as plt
 import sqlite3
@@ -84,7 +89,7 @@ def vis_amount_of_cities_for_AQI_range(cur, conn):
     f = open('calculations.txt', 'a')
     f.write('This is the number of cities whose air quality index falls into each category defined by the American Lung Association based on data from our database of the most populous cities:\n')
     for aqi_ALA_range in number_of_cities_in_AQI_Range:
-        f.write("There are " + str(number_of_cities_in_AQI_Range[aqi_ALA_range]) + " number of cities in the air quality index category " + aqi_ALA_range + " of the most populous cities in our database.\n")
+        f.write("There are " + str(number_of_cities_in_AQI_Range[aqi_ALA_range]) + " cities in the air quality index category " + aqi_ALA_range + " of the most populous cities in our database.\n")
     f.write('\n')
     f.close()
 
@@ -95,7 +100,7 @@ def vis_amount_of_cities_for_AQI_range(cur, conn):
         citynumber = int(citynumber)
 
     plt.pie(number_of_cities, labels = ALA_Category, autopct='%1.1f%%', colors=['green', 'yellow', 'darkorange', 'magenta', 'darkmagenta', 'red'])
-    plt.title('Number of Cities in each Air Quality Index Category\n(based on data from our database of most populous cities)')
+    plt.title('Percentage of Cities in each Air Quality Index Category\n(based on data from our database of most populous cities)')
     plt.xlabel('Air Quality Index Category')
     plt.show()
 
@@ -125,7 +130,6 @@ def vis_pollutant_by_country(cur, conn):
     for country in country_carbon_monoxide_concentration:
         average_carbon_monoxide_concentration_by_country[country] = country_carbon_monoxide_concentration[country] / number_of_data_points_by_country[country]
 
-    print(average_carbon_monoxide_concentration_by_country)
 
     # writing into calculations file
     f = open('calculations.txt', 'a')
@@ -233,6 +237,32 @@ def vis_weather(cur, conn):
         temp_list.append(item[0])
         humidity_list.append(item[1])
 
+    #Doing calculations
+    avg_temp = 0
+    avg_humidity = 0
+    temp_counter = 0
+    humidity_counter = 0
+
+    for temp in temp_list:
+        avg_temp += temp
+        temp_counter += 1
+    
+    avg_temp = avg_temp / temp_counter
+
+    for humidity in humidity_list:
+        avg_humidity += humidity
+        humidity_counter += 1
+    
+    avg_humidity = avg_humidity / humidity_counter
+
+    # writing aqi range data into the calculations file
+    f = open('calculations.txt', 'a')
+    f.write('This is the average temperature and humidity of all cities in our database of the most populous cities:\n')
+    f.write("The average temperature for all the cities in the database is: " + str(avg_temp) + "! \n")
+    f.write("The average humidity for all the cities in the database is: " + str(avg_humidity) +"! \n")
+    f.write('\n')
+    f.close()
+
     plt.figure()
     plt.scatter(temp_list, humidity_list, c='red', alpha=0.5)
 
@@ -242,6 +272,7 @@ def vis_weather(cur, conn):
     plt.ylabel('Current Humidity in City')
     plt.tight_layout()
     plt.show()
+
 
 # run the show
 cur, conn = setUpDatabase('TopCityAQI.db')

@@ -1,0 +1,66 @@
+This is the number of cities per region based on data from our database of the most populous cities:
+Asia has 70 of the most populous cities in our database.
+Europe has 7 of the most populous cities in our database.
+Africa has 12 of the most populous cities in our database.
+Australia has 2 of the most populous cities in our database.
+America has 9 of the most populous cities in our database.
+
+This is the average AQI per region based on data from our database of the most populous cities:
+Asia's average AQI is 182.8 based on its most populous cities.
+Europe's average AQI is 42.714285714285715 based on its most populous cities.
+Africa's average AQI is 101.91666666666667 based on its most populous cities.
+Australia's average AQI is 11.5 based on its most populous cities.
+America's average AQI is 137.66666666666666 based on its most populous cities.
+
+This is the number of cities whose air quality index falls into each category defined by the American Lung Association based on data from our database of the most populous cities:
+There are 13 cities in the air quality index category Good of the most populous cities in our database.
+There are 19 cities in the air quality index category Moderate of the most populous cities in our database.
+There are 20 cities in the air quality index category Unhealthy for Sensitive Groups of the most populous cities in our database.
+There are 28 cities in the air quality index category Unhealthy of the most populous cities in our database.
+There are 12 cities in the air quality index category Very Unhealthy of the most populous cities in our database.
+There are 8 cities in the air quality index category Hazardous of the most populous cities in our database.
+
+This is the average carbon monoxide concentration average by country based on data from our database of the most populous cities:
+Iraq has an average carbon monoxide concentration of 2189.0 based on the most populous cities in our database.
+Saudi Arabia has an average carbon monoxide concentration of 560.0 based on the most populous cities in our database.
+Iran, Islamic Rep. of has an average carbon monoxide concentration of 3284.0 based on the most populous cities in our database.
+United Arab Emirates has an average carbon monoxide concentration of 413.0 based on the most populous cities in our database.
+Turkey has an average carbon monoxide concentration of 345.0 based on the most populous cities in our database.
+Egypt has an average carbon monoxide concentration of 303.3333333333333 based on the most populous cities in our database.
+Russian Federation has an average carbon monoxide concentration of 253.5 based on the most populous cities in our database.
+South Africa has an average carbon monoxide concentration of 463.6666666666667 based on the most populous cities in our database.
+Afghanistan has an average carbon monoxide concentration of 934.0 based on the most populous cities in our database.
+Pakistan has an average carbon monoxide concentration of 4966.0 based on the most populous cities in our database.
+Bangladesh has an average carbon monoxide concentration of 1902.0 based on the most populous cities in our database.
+India has an average carbon monoxide concentration of 1586.111111111111 based on the most populous cities in our database.
+Myanmar has an average carbon monoxide concentration of 727.0 based on the most populous cities in our database.
+Viet Nam has an average carbon monoxide concentration of 2256.0 based on the most populous cities in our database.
+Thailand has an average carbon monoxide concentration of 2109.0 based on the most populous cities in our database.
+Indonesia has an average carbon monoxide concentration of 39733.0 based on the most populous cities in our database.
+Taiwan, China has an average carbon monoxide concentration of 205.0 based on the most populous cities in our database.
+China has an average carbon monoxide concentration of 901.7368421052631 based on the most populous cities in our database.
+Hong Kong, China has an average carbon monoxide concentration of 867.0 based on the most populous cities in our database.
+Korea, Republic of has an average carbon monoxide concentration of 398.5 based on the most populous cities in our database.
+Japan has an average carbon monoxide concentration of 413.5 based on the most populous cities in our database.
+Korea, Dem. People's Rep. of has an average carbon monoxide concentration of 514.0 based on the most populous cities in our database.
+Singapore has an average carbon monoxide concentration of 687.0 based on the most populous cities in our database.
+Australia has an average carbon monoxide concentration of 183.0 based on the most populous cities in our database.
+Côte d'Ivoire has an average carbon monoxide concentration of 410.0 based on the most populous cities in our database.
+Congo, Democratic Republic of the has an average carbon monoxide concentration of 694.0 based on the most populous cities in our database.
+Nigeria has an average carbon monoxide concentration of 1045.6666666666667 based on the most populous cities in our database.
+Morocco has an average carbon monoxide concentration of 185.0 based on the most populous cities in our database.
+United Kingdom has an average carbon monoxide concentration of 333.0 based on the most populous cities in our database.
+Germany has an average carbon monoxide concentration of 263.0 based on the most populous cities in our database.
+Spain has an average carbon monoxide concentration of 208.0 based on the most populous cities in our database.
+Argentina has an average carbon monoxide concentration of 317.0 based on the most populous cities in our database.
+Brazil has an average carbon monoxide concentration of 914.0 based on the most populous cities in our database.
+Mexico has an average carbon monoxide concentration of 1682.0 based on the most populous cities in our database.
+Colombia has an average carbon monoxide concentration of 300.0 based on the most populous cities in our database.
+Chile has an average carbon monoxide concentration of 247.0 based on the most populous cities in our database.
+Peru has an average carbon monoxide concentration of 353.0 based on the most populous cities in our database.
+United States has an average carbon monoxide concentration of 383.0 based on the most populous cities in our database.
+
+This is the average temperature and humidity of all cities in our database of the most populous cities:
+The average temperature for all the cities in the database is: 54.058! 
+The average humidity for all the cities in the database is: 63.89! 
+
